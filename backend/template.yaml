@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+
+  SeedItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: seedItems.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          TABLE_NAME: FoodItems
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: "*"
+      Events:
+        SeedApi:
+          Type: Api
+          Properties:
+            Path: /seed
+            Method: post
+
+  GetItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getItems.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          TABLE_NAME: FoodItems
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: "*"
+      Events:
+        GetItemsApi:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: get
+
+  GetAnalyticsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getAnalytics.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          TABLE_NAME: FoodItems
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: "*"
+      Events:
+        GetAnalyticsApi:
+          Type: Api
+          Properties:
+            Path: /analytics
+            Method: get
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL for Prod stage
+    Value: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
+    
