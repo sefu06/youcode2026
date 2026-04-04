@@ -1,0 +1,31 @@
+<svg width="260" height="72" viewBox="0 0 260 72" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bloom Pantry — Wordmark lockup (dark) -->
+  <rect width="260" height="72" rx="10" fill="#2f3e46"/>
+
+  <!-- Bloom flower mark -->
+  <ellipse cx="30" cy="32" rx="8" ry="18" fill="#6d9c90"/>
+  <ellipse cx="30" cy="32" rx="8" ry="18" fill="#6d9c90" transform="rotate(60 30 32)"/>
+  <ellipse cx="30" cy="32" rx="8" ry="18" fill="#6d9c90" transform="rotate(120 30 32)"/>
+  <ellipse cx="30" cy="32" rx="6" ry="12" fill="#9fbca5" transform="rotate(30 30 32)"/>
+  <ellipse cx="30" cy="32" rx="6" ry="12" fill="#9fbca5" transform="rotate(90 30 32)"/>
+  <ellipse cx="30" cy="32" rx="6" ry="12" fill="#9fbca5" transform="rotate(150 30 32)"/>
+  <circle cx="30" cy="32" r="9"  fill="#496bbf"/>
+  <circle cx="30" cy="32" r="5"  fill="#d5dcd1"/>
+  <circle cx="30" cy="32" r="2"  fill="#496bbf"/>
+
+  <!-- Wordmark -->
+  <text x="54" y="26"
+    font-family="'DM Serif Display', Georgia, serif"
+    font-size="22" font-weight="400"
+    fill="#d5dcd1">bloom</text>
+  <text x="54" y="48"
+    font-family="'DM Sans', system-ui, sans-serif"
+    font-size="20" font-weight="400"
+    fill="#9fbca5">pantry</text>
+
+  <!-- Tagline -->
+  <text x="54" y="64"
+    font-family="'DM Sans', system-ui, sans-serif"
+    font-size="9" font-weight="400"
+    fill="#6d9c90" letter-spacing="2">NOURISHING COMMUNITY</text>
+</svg>

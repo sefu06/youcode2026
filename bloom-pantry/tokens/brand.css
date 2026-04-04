@@ -1,0 +1,43 @@
+/* ─────────────────────────────────────────
+   Bloom Pantry — Brand Design Tokens
+   ───────────────────────────────────────── */
+
+:root {
+  /* Palette */
+  --bp-mist:        #d5dcd1;
+  --bp-sage:        #9fbca5;
+  --bp-teal-fern:   #6d9c90;
+  --bp-dusk-blue:   #496bbf;
+  --bp-deep-forest: #2f3e46;
+
+  /* Semantic */
+  --bp-bg:          var(--bp-mist);
+  --bp-bg-dark:     var(--bp-deep-forest);
+  --bp-primary:     var(--bp-teal-fern);
+  --bp-accent:      var(--bp-dusk-blue);
+  --bp-text:        var(--bp-deep-forest);
+  --bp-text-light:  var(--bp-mist);
+  --bp-text-muted:  var(--bp-sage);
+
+  /* Status colours */
+  --bp-status-fresh:    #9fbca5;
+  --bp-status-use-soon: #496bbf;
+  --bp-status-expiring: #2f3e46;
+  --bp-status-in-stock: #6d9c90;
+  --bp-status-low:      #d5dcd1;
+
+  /* Typography */
+  --bp-font-display: 'DM Serif Display', Georgia, serif;
+  --bp-font-body:    'DM Sans', system-ui, sans-serif;
+
+  /* Spacing */
+  --bp-radius-sm:   6px;
+  --bp-radius-md:   10px;
+  --bp-radius-lg:   16px;
+  --bp-radius-pill: 100px;
+
+  /* Shadows */
+  --bp-shadow-sm: 0 1px 3px rgba(47,62,70,0.10);
+  --bp-shadow-md: 0 4px 16px rgba(47,62,70,0.12);
+  --bp-shadow-lg: 0 8px 32px rgba(47,62,70,0.16);
+}
