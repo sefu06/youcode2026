@@ -1,0 +1,53 @@
+# =========================
+# GENERAL
+# =========================
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+
+# =========================
+# MOBILE (EXPO / REACT NATIVE)
+# =========================
+mobile/node_modules/
+mobile/.expo/
+mobile/.expo-shared/
+mobile/android/
+mobile/ios/
+mobile/*.log
+
+# =========================
+# DASHBOARD (REACT / VITE)
+# =========================
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env
+
+# =========================
+# BACKEND (AWS SAM)
+# =========================
+backend/node_modules/
+backend/.aws-sam/
+backend/.env
+
+# =========================
+# AWS / CREDENTIALS
+# =========================
+.aws/
+aws-exports.js
+amplify/
+amplify-*
+*.pem
+*.key
+
+# =========================
+# IDE FILES
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS FILES
+# =========================
+Thumbs.db
