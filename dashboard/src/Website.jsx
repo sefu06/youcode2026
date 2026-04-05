@@ -4,33 +4,7 @@ import bloomIcon from './assets/icon-bloom.svg'
 import yogurtBowlImg from './assets/yogurt-bowl.webp'
 import './Website.css'
 
-const analyticsStats = [
-  { label: 'Items Stored This Week', value: 1284, detail: '↑ 146 compared to last week' },
-  { label: 'Food Categories Tracked', value: 6, detail: '↑ Updated from daily intake logs' },
-  { label: 'Urgent Expiry Items', value: 10, detail: '↑ Needs review within 10 days' },
-]
-
-const inventoryCategories = [
-  { category: 'Non Perishable Foods', amount: '410 items', share: '32%' },
-  { category: 'Fresh Produce', amount: '235 items', share: '18%' },
-  { category: 'Dairy and Eggs', amount: '164 items', share: '13%' },
-  { category: 'Frozen Meals', amount: '148 items', share: '12%' },
-  { category: 'Protein and Canned Beans', amount: '207 items', share: '16%' },
-  { category: 'Baby and Snack Items', amount: '120 items', share: '9%' },
-]
-
-const expiringFoods = [
-  { name: 'Spinach', expiresInDays: 1 },
-  { name: 'Milk cartons', expiresInDays: 2 },
-  { name: 'Yogurt cups', expiresInDays: 3 },
-  { name: 'Strawberries', expiresInDays: 4 },
-  { name: 'Cooked rice packs', expiresInDays: 5 },
-  { name: 'Chicken broth', expiresInDays: 6 },
-  { name: 'Soft tortillas', expiresInDays: 7 },
-  { name: 'Cheddar blocks', expiresInDays: 8 },
-  { name: 'Carrot bags', expiresInDays: 9 },
-  { name: 'Hummus tubs', expiresInDays: 10 },
-]
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 const recipes = [
   {
@@ -187,6 +161,13 @@ function formatExpiry(expiresInDays) {
 function Website() {
   const [activeTab, setActiveTab] = useState('analytics')
   const [selectedRecipeId, setSelectedRecipeId] = useState('')
+  const [analyticsStats, setAnalyticsStats] = useState([
+    { label: 'Items Stored', value: 0, detail: 'Loading...' },
+    { label: 'Food Categories Tracked', value: 0, detail: 'Loading...' },
+    { label: 'Urgent Expiry Items', value: 0, detail: 'Loading...' },
+  ])
+  const [inventoryCategories, setInventoryCategories] = useState([])
+  const [expiringFoods, setExpiringFoods] = useState([])
   const [weeklySummary, setWeeklySummary] = useState([
     'Need to buy bananas.',
     'Non perishable foods remain the largest category in storage.',
@@ -195,9 +176,9 @@ function Website() {
   const [editingSummaryIndex, setEditingSummaryIndex] = useState(null)
   const [draftPoint, setDraftPoint] = useState('')
   const [recipeMode, setRecipeMode] = useState('normal')
+  const [apiError, setApiError] = useState('')
   const [heroRef, heroInView] = useInView()
   const [statsRef, statsInView] = useInView()
-  const topInventoryCategories = inventoryCategories.slice(0, 4)
   const selectedRecipe =
     recipes.find((recipe) => recipe.id === selectedRecipeId) ?? recipes[0]
   const alternateRecipes = recipes.filter((recipe) => recipe.id !== recipes[0].id)
@@ -208,6 +189,84 @@ function Website() {
   const categoryCount = useCountUp(analyticsStats[1].value, analyticsVisible, 1000)
   const urgentExpiryCount = useCountUp(analyticsStats[2].value, analyticsVisible, 1000)
   const animatedStats = [storedItemsCount, categoryCount, urgentExpiryCount]
+  const topInventoryCategories = inventoryCategories.slice(0, 4)
+
+  useEffect(() => {
+    const daysUntil = (dateStr) => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      const expiry = new Date(dateStr)
+      if (Number.isNaN(expiry.getTime())) return Number.MAX_SAFE_INTEGER
+
+      expiry.setHours(0, 0, 0, 0)
+      return Math.ceil((expiry - today) / (1000 * 60 * 60 * 24))
+    }
+
+    const fetchJson = async (path) => {
+      const response = await fetch(`${API_BASE}${path}`)
+
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`)
+      }
+
+      return response.json()
+    }
+
+    const loadDashboard = async () => {
+      try {
+        setApiError('')
+        const [analyticsData, itemsData] = await Promise.all([
+          fetchJson('/analytics'),
+          fetchJson('/items'),
+        ])
+
+        const items = Array.isArray(itemsData) ? itemsData : []
+        const totalItems = analyticsData?.totalItems ?? items.length ?? 0
+        const urgentIn7Days = analyticsData?.expiringIn7Days ?? 0
+        const categoryBreakdown = analyticsData?.categoryBreakdown ?? []
+
+        const categories = categoryBreakdown.map(({ category, count }) => ({
+          category: category || 'Uncategorized',
+          amount: `${count ?? 0} items`,
+          share: totalItems ? `${Math.round(((count ?? 0) / totalItems) * 100)}%` : '—',
+        }))
+
+        const expiringList = items
+          .map((item) => ({
+            name: item.foodName ?? 'Unknown item',
+            expiresInDays: daysUntil(item.expiryDate),
+          }))
+          .filter((item) => item.expiresInDays >= 0)
+          .sort((a, b) => a.expiresInDays - b.expiresInDays)
+          .slice(0, 10)
+
+        setAnalyticsStats([
+          {
+            label: 'Items Stored',
+            value: totalItems,
+            detail: `Updated from ${items.length} records`,
+          },
+          {
+            label: 'Food Categories Tracked',
+            value: categories.length,
+            detail: 'Live from DynamoDB',
+          },
+          {
+            label: 'Urgent Expiry Items',
+            value: urgentIn7Days || expiringList.length,
+            detail: 'Expiring within 7 days',
+          },
+        ])
+        setInventoryCategories(categories)
+        setExpiringFoods(expiringList)
+      } catch (error) {
+        setApiError(error.message || 'Failed to load dashboard data')
+      }
+    }
+
+    loadDashboard()
+  }, [])
 
   const openRecipe = (recipeId) => {
     setSelectedRecipeId(recipeId)
@@ -248,6 +307,11 @@ function Website() {
 
   return (
     <main className="website-shell">
+      {apiError ? (
+        <div className="error-banner">
+          <p>Could not load data from the API: {apiError}</p>
+        </div>
+      ) : null}
       <section className="website-hero" ref={heroRef}>
         <div className="hero-title-block">
           <p className="eyebrow hero-support-title">
