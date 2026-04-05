@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
+import { FONT } from '../../constants/typography';
 import { analyzeFood } from '../../services/gemini';
 
 export default function ScanScreen() {
@@ -27,14 +28,16 @@ export default function ScanScreen() {
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: Colors.bg }]}>
         <View style={styles.permBox}>
-          <Text style={styles.permEmoji}>📸</Text>
+          <View style={styles.permIconWrap}>
+            <MaterialIcons name="camera-alt" size={36} color={Colors.fern} />
+          </View>
           <Text style={styles.permTitle}>Camera Access Needed</Text>
           <Text style={styles.permDesc}>
-            Bloom Pantry needs your camera to scan food items.
+            Bloom Pantry uses your camera to identify and log food items automatically.
           </Text>
-          <TouchableOpacity style={styles.permBtn} onPress={requestPermission}>
+          <TouchableOpacity style={styles.permBtn} onPress={requestPermission} activeOpacity={0.85}>
             <Text style={styles.permBtnText}>Grant Permission</Text>
           </TouchableOpacity>
         </View>
@@ -81,35 +84,53 @@ export default function ScanScreen() {
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+        {/* Top bar */}
         <SafeAreaView style={styles.topBar}>
-          <Text style={styles.topTitle}>📷 Scan Item</Text>
-          <Text style={styles.topHint}>Point at a food or grocery item</Text>
+          <Text style={styles.topTitle}>Scan Item</Text>
+          <Text style={styles.topHint}>Center a food item in the frame</Text>
         </SafeAreaView>
 
+        {/* Viewfinder */}
         <View style={styles.frameWrapper} pointerEvents="none">
           <View style={styles.frame}>
+            {/* Corner brackets */}
             <View style={[styles.corner, styles.tl]} />
             <View style={[styles.corner, styles.tr]} />
             <View style={[styles.corner, styles.bl]} />
             <View style={[styles.corner, styles.br]} />
+            {/* Center crosshair */}
+            <View style={styles.crossH} />
+            <View style={styles.crossV} />
           </View>
+          <Text style={styles.frameLabel}>powering your pantry</Text>
         </View>
 
+        {/* Bottom controls */}
         <View style={styles.bottomBar}>
           {analyzing ? (
             <View style={styles.analyzingBox}>
-              <ActivityIndicator size="large" color={Colors.tealFern} />
-              <Text style={styles.analyzingText}>Analyzing with Gemini AI...</Text>
+              <View style={styles.analyzingInner}>
+                <ActivityIndicator size="small" color={Colors.fern} />
+                <Text style={styles.analyzingText}>Analyzing with Gemini…</Text>
+              </View>
             </View>
           ) : (
-            <TouchableOpacity
-              style={styles.captureBtn}
-              onPress={handleCapture}
-              activeOpacity={0.8}
-              disabled={analyzing}
-            >
-              <View style={styles.captureBtnInner} />
-            </TouchableOpacity>
+            <View style={styles.captureRow}>
+              <View style={styles.captureHint}>
+                <Text style={styles.captureHintText}>Tap to capture</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.captureBtn}
+                onPress={handleCapture}
+                activeOpacity={0.85}
+                disabled={analyzing}
+              >
+                <View style={styles.captureBtnRing}>
+                  <View style={styles.captureBtnCore} />
+                </View>
+              </TouchableOpacity>
+              <View style={styles.captureHint} />
+            </View>
           )}
         </View>
       </CameraView>
@@ -117,13 +138,13 @@ export default function ScanScreen() {
   );
 }
 
-const CORNER_SIZE = 24;
-const CORNER_THICKNESS = 3;
+const CORNER = 28;
+const THICKNESS = 3;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.deepForest,
+    backgroundColor: '#0D1A10',
   },
   camera: {
     flex: 1,
@@ -131,333 +152,194 @@ const styles = StyleSheet.create({
   topBar: {
     alignItems: 'center',
     paddingTop: 16,
-    paddingBottom: 12,
-    backgroundColor: 'rgba(47,62,70,0.55)',
+    paddingBottom: 14,
+    backgroundColor: 'rgba(13,26,16,0.65)',
   },
   topTitle: {
     color: Colors.white,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: -0.3,
+    fontFamily: FONT,
+    letterSpacing: -0.2,
   },
   topHint: {
-    color: Colors.mist,
-    fontSize: 13,
-    marginTop: 2,
+    color: 'rgba(255,255,255,0.55)',
+    fontSize: 12,
+    fontFamily: FONT,
+    marginTop: 3,
+    letterSpacing: 0.1,
   },
   frameWrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 16,
   },
   frame: {
-    width: 260,
-    height: 260,
+    width: 264,
+    height: 264,
     position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   corner: {
     position: 'absolute',
-    width: CORNER_SIZE,
-    height: CORNER_SIZE,
-    borderColor: Colors.tealFern,
+    width: CORNER,
+    height: CORNER,
+    borderColor: Colors.fern,
   },
   tl: {
-    top: 0,
-    left: 0,
-    borderTopWidth: CORNER_THICKNESS,
-    borderLeftWidth: CORNER_THICKNESS,
-    borderTopLeftRadius: 4,
+    top: 0, left: 0,
+    borderTopWidth: THICKNESS, borderLeftWidth: THICKNESS,
+    borderTopLeftRadius: 6,
   },
   tr: {
-    top: 0,
-    right: 0,
-    borderTopWidth: CORNER_THICKNESS,
-    borderRightWidth: CORNER_THICKNESS,
-    borderTopRightRadius: 4,
+    top: 0, right: 0,
+    borderTopWidth: THICKNESS, borderRightWidth: THICKNESS,
+    borderTopRightRadius: 6,
   },
   bl: {
-    bottom: 0,
-    left: 0,
-    borderBottomWidth: CORNER_THICKNESS,
-    borderLeftWidth: CORNER_THICKNESS,
-    borderBottomLeftRadius: 4,
+    bottom: 0, left: 0,
+    borderBottomWidth: THICKNESS, borderLeftWidth: THICKNESS,
+    borderBottomLeftRadius: 6,
   },
   br: {
-    bottom: 0,
-    right: 0,
-    borderBottomWidth: CORNER_THICKNESS,
-    borderRightWidth: CORNER_THICKNESS,
-    borderBottomRightRadius: 4,
+    bottom: 0, right: 0,
+    borderBottomWidth: THICKNESS, borderRightWidth: THICKNESS,
+    borderBottomRightRadius: 6,
+  },
+  crossH: {
+    position: 'absolute',
+    width: 20,
+    height: 1,
+    backgroundColor: 'rgba(74,136,112,0.4)',
+  },
+  crossV: {
+    position: 'absolute',
+    width: 1,
+    height: 20,
+    backgroundColor: 'rgba(74,136,112,0.4)',
+  },
+  frameLabel: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 11,
+    fontFamily: FONT,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    fontWeight: '600',
   },
   bottomBar: {
-    alignItems: 'center',
-    paddingBottom: 48,
+    paddingBottom: 52,
     paddingTop: 24,
-    backgroundColor: 'rgba(47,62,70,0.55)',
+    backgroundColor: 'rgba(13,26,16,0.65)',
+    alignItems: 'center',
+  },
+  captureRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    paddingHorizontal: 32,
+  },
+  captureHint: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  captureHintText: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 12,
+    fontFamily: FONT,
+    letterSpacing: 0.4,
   },
   captureBtn: {
+    width: 76,
+    height: 76,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  captureBtnRing: {
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.white,
+    borderWidth: 3,
+    borderColor: Colors.white,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 4,
-    borderColor: Colors.tealFern,
   },
-  captureBtnInner: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: Colors.tealFern,
+  captureBtnCore: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: Colors.white,
   },
   analyzingBox: {
     alignItems: 'center',
+    paddingVertical: 8,
+  },
+  analyzingInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 100,
   },
   analyzingText: {
     color: Colors.white,
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: FONT,
+    letterSpacing: 0.1,
   },
   permBox: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
-    gap: 12,
-    backgroundColor: Colors.bg,
+    padding: 36,
+    gap: 14,
   },
-  permEmoji: {
-    fontSize: 52,
+  permIconWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 24,
+    backgroundColor: Colors.dew,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   permTitle: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
+    fontFamily: FONT,
     color: Colors.text,
+    letterSpacing: -0.3,
+    textAlign: 'center',
   },
   permDesc: {
     fontSize: 14,
     color: Colors.textMuted,
+    fontFamily: FONT,
     textAlign: 'center',
+    lineHeight: 21,
   },
   permBtn: {
     marginTop: 8,
-    backgroundColor: Colors.tealFern,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
+    backgroundColor: Colors.forest,
+    paddingVertical: 15,
+    paddingHorizontal: 36,
     borderRadius: 100,
+    shadowColor: Colors.forest,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
   },
   permBtnText: {
     color: Colors.white,
     fontWeight: '700',
+    fontFamily: FONT,
     fontSize: 15,
+    letterSpacing: 0.2,
   },
 });
-// import React, { useState, useRef } from 'react';
-// import {
-//   View,
-//   Text,
-//   StyleSheet,
-//   TouchableOpacity,
-//   ActivityIndicator,
-//   Alert,
-// } from 'react-native';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-// import { router } from 'expo-router';
-// import { Colors } from '../../constants/colors';
-// import { analyzeFood } from '../../services/gemini';
-
-// export default function ScanScreen() {
-//   const [permission, requestPermission] = useCameraPermissions();
-//   const [facing] = useState<CameraType>('back');
-//   const [analyzing, setAnalyzing] = useState(false);
-//   const cameraRef = useRef<CameraView>(null);
-
-//   // Permission not yet determined
-//   if (!permission) {
-//     return <View style={styles.container} />;
-//   }
-
-//   // Permission denied
-//   if (!permission.granted) {
-//     return (
-//       <SafeAreaView style={styles.container}>
-//         <View style={styles.permBox}>
-//           <Text style={styles.permEmoji}>📸</Text>
-//           <Text style={styles.permTitle}>Camera Access Needed</Text>
-//           <Text style={styles.permDesc}>
-//             Bloom Pantry needs your camera to scan food items.
-//           </Text>
-//           <TouchableOpacity style={styles.permBtn} onPress={requestPermission}>
-//             <Text style={styles.permBtnText}>Grant Permission</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </SafeAreaView>
-//     );
-//   }
-
-//   const handleCapture = async () => {
-//     if (!cameraRef.current || analyzing) return;
-//     setAnalyzing(true);
-//     try {
-//       const photo = await cameraRef.current.takePictureAsync({ quality: 0.3, base64: false });
-//       if (!photo?.uri) throw new Error('Failed to capture photo');
-
-//       const result = await analyzeFood(photo.uri);
-
-//       router.push({
-//         pathname: '/confirm',
-//         params: {
-//           imageUri: photo.uri,
-//           data: JSON.stringify(result),
-//         },
-//       });
-//     } catch (e: any) {
-//       Alert.alert('Scan Failed', e.message ?? 'Could not analyze the image. Please try again.');
-//     } finally {
-//       setAnalyzing(false);
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
-//         {/* Top bar */}
-//         <SafeAreaView style={styles.topBar}>
-//           <Text style={styles.topTitle}>📷 Scan Item</Text>
-//           <Text style={styles.topHint}>Point at a food or grocery item</Text>
-//         </SafeAreaView>
-
-//         {/* Viewfinder frame */}
-//         <View style={styles.frameWrapper} pointerEvents="none">
-//           <View style={styles.frame}>
-//             <View style={[styles.corner, styles.tl]} />
-//             <View style={[styles.corner, styles.tr]} />
-//             <View style={[styles.corner, styles.bl]} />
-//             <View style={[styles.corner, styles.br]} />
-//           </View>
-//         </View>
-
-//         {/* Bottom controls */}
-//         <View style={styles.bottomBar}>
-//           {analyzing ? (
-//             <View style={styles.analyzingBox}>
-//               <ActivityIndicator size="large" color={Colors.tealFern} />
-//               <Text style={styles.analyzingText}>Analyzing with Gemini AI...</Text>
-//             </View>
-//           ) : (
-//             <TouchableOpacity
-//               style={styles.captureBtn}
-//               onPress={handleCapture}
-//               activeOpacity={0.8}
-//             >
-//               <View style={styles.captureBtnInner} />
-//             </TouchableOpacity>
-//           )}
-//         </View>
-//       </CameraView>
-//     </View>
-//   );
-// }
-
-// const CORNER_SIZE = 24;
-// const CORNER_THICKNESS = 3;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: Colors.deepForest,
-//   },
-//   camera: {
-//     flex: 1,
-//   },
-//   topBar: {
-//     alignItems: 'center',
-//     paddingTop: 16,
-//     paddingBottom: 12,
-//     backgroundColor: 'rgba(47,62,70,0.55)',
-//   },
-//   topTitle: {
-//     color: Colors.white,
-//     fontSize: 18,
-//     fontWeight: '700',
-//     letterSpacing: -0.3,
-//   },
-//   topHint: {
-//     color: Colors.mist,
-//     fontSize: 13,
-//     marginTop: 2,
-//   },
-//   frameWrapper: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   frame: {
-//     width: 260,
-//     height: 260,
-//     position: 'relative',
-//   },
-//   corner: {
-//     position: 'absolute',
-//     width: CORNER_SIZE,
-//     height: CORNER_SIZE,
-//     borderColor: Colors.tealFern,
-//   },
-//   tl: { top: 0, left: 0, borderTopWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS, borderTopLeftRadius: 4 },
-//   tr: { top: 0, right: 0, borderTopWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderTopRightRadius: 4 },
-//   bl: { bottom: 0, left: 0, borderBottomWidth: CORNER_THICKNESS, borderLeftWidth: CORNER_THICKNESS, borderBottomLeftRadius: 4 },
-//   br: { bottom: 0, right: 0, borderBottomWidth: CORNER_THICKNESS, borderRightWidth: CORNER_THICKNESS, borderBottomRightRadius: 4 },
-//   bottomBar: {
-//     alignItems: 'center',
-//     paddingBottom: 48,
-//     paddingTop: 24,
-//     backgroundColor: 'rgba(47,62,70,0.55)',
-//   },
-//   captureBtn: {
-//     width: 72,
-//     height: 72,
-//     borderRadius: 36,
-//     backgroundColor: Colors.white,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     borderWidth: 4,
-//     borderColor: Colors.tealFern,
-//   },
-//   captureBtnInner: {
-//     width: 54,
-//     height: 54,
-//     borderRadius: 27,
-//     backgroundColor: Colors.tealFern,
-//   },
-//   analyzingBox: {
-//     alignItems: 'center',
-//     gap: 10,
-//   },
-//   analyzingText: {
-//     color: Colors.white,
-//     fontSize: 14,
-//     fontWeight: '600',
-//   },
-//   permBox: {
-//     flex: 1,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 32,
-//     gap: 12,
-//     backgroundColor: Colors.bg,
-//   },
-//   permEmoji: { fontSize: 52 },
-//   permTitle: { fontSize: 20, fontWeight: '700', color: Colors.text },
-//   permDesc: { fontSize: 14, color: Colors.textMuted, textAlign: 'center' },
-//   permBtn: {
-//     marginTop: 8,
-//     backgroundColor: Colors.tealFern,
-//     paddingVertical: 14,
-//     paddingHorizontal: 32,
-//     borderRadius: 100,
-//   },
-//   permBtnText: { color: Colors.white, fontWeight: '700', fontSize: 15 },
-// });

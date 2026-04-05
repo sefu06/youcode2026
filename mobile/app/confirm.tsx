@@ -14,7 +14,9 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '../constants/colors';
+import { FONT } from '../constants/typography';
 import { CATEGORIES } from '../constants/categories';
 import { GeminiResult } from '../services/gemini';
 import { API_BASE_URL, API_KEY, API_TOKEN } from '../config/api';
@@ -84,39 +86,55 @@ export default function ConfirmScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity style={styles.cancelBtn} onPress={() => router.back()}>
-              <Text style={styles.cancelText}>✕</Text>
+              <MaterialIcons name="close" size={18} color={Colors.textMuted} />
             </TouchableOpacity>
-            <Text style={styles.title}>Confirm Item</Text>
+            <Text style={styles.title}>Review Item</Text>
             <View style={{ width: 36 }} />
           </View>
 
           {/* Photo */}
           {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.photo} resizeMode="cover" />
-          ) : null}
+            <View style={styles.photoWrap}>
+              <Image source={{ uri: imageUri }} style={styles.photo} resizeMode="cover" />
+              <View style={styles.aiBadge}>
+                <MaterialIcons name="auto-awesome" size={11} color={Colors.white} />
+              <Text style={styles.aiBadgeText}>Gemini AI</Text>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.aiBadgeStandalone}>
+              <MaterialIcons name="auto-awesome" size={11} color={Colors.forest} />
+              <Text style={styles.aiBadgeTextDark}>Filled by Gemini AI — review below</Text>
+            </View>
+          )}
 
-          {/* AI badge */}
-          <View style={styles.aiBadge}>
-            <Text style={styles.aiBadgeText}>✨ Filled by Gemini AI — review & edit below</Text>
-          </View>
-
-          {/* Fields */}
+          {/* Form card */}
           <View style={styles.card}>
-            <Field label="Food Name" emoji="🍽️">
+            {/* Food name */}
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Food Name</Text>
               <TextInput
                 style={styles.input}
                 value={foodName}
                 onChangeText={setFoodName}
                 placeholder="e.g. Whole Milk"
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={Colors.textLight}
               />
-            </Field>
+            </View>
 
-            <Field label="Quantity" emoji="🔢">
+            <View style={styles.fieldDivider} />
+
+            {/* Quantity + Unit */}
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Quantity</Text>
               <View style={styles.row}>
                 <TextInput
                   style={[styles.input, styles.qtyInput]}
@@ -124,38 +142,42 @@ export default function ConfirmScreen() {
                   onChangeText={setQuantity}
                   keyboardType="numeric"
                   placeholder="1"
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={Colors.textLight}
                 />
                 <TextInput
                   style={[styles.input, styles.unitInput]}
                   value={unit}
                   onChangeText={setUnit}
                   placeholder="pieces"
-                  placeholderTextColor={Colors.textMuted}
+                  placeholderTextColor={Colors.textLight}
                 />
               </View>
-            </Field>
+            </View>
 
-            <Field label="Expiry Date" emoji="📅">
+            <View style={styles.fieldDivider} />
+
+            {/* Expiry date */}
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>Expiry Date</Text>
               <TextInput
                 style={styles.input}
                 value={expiryDate}
                 onChangeText={setExpiryDate}
                 placeholder="YYYY-MM-DD"
-                placeholderTextColor={Colors.textMuted}
+                placeholderTextColor={Colors.textLight}
               />
-            </Field>
+            </View>
           </View>
 
-          {/* Category picker */}
-          <Text style={styles.sectionLabel}>📂 Category</Text>
+          {/* Category */}
+          <Text style={styles.sectionLabel}>Category</Text>
           <View style={styles.categoryGrid}>
             {categories.map((cat) => (
               <TouchableOpacity
                 key={cat.id}
                 style={[styles.catPill, category === cat.id && styles.catPillActive]}
                 onPress={() => setCategory(cat.id)}
-                activeOpacity={0.75}
+                activeOpacity={0.7}
               >
                 <Text style={styles.catEmoji}>{cat.emoji}</Text>
                 <Text style={[styles.catLabel, category === cat.id && styles.catLabelActive]}>
@@ -165,17 +187,17 @@ export default function ConfirmScreen() {
             ))}
           </View>
 
-          {/* Save */}
+          {/* Save button */}
           <TouchableOpacity
             style={[styles.saveBtn, saving && styles.saveBtnDisabled]}
             onPress={handleSave}
             disabled={saving}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
           >
             {saving ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
-              <Text style={styles.saveBtnText}>🌿 Add to Pantry</Text>
+              <Text style={styles.saveBtnText}>Add to Pantry</Text>
             )}
           </TouchableOpacity>
         </ScrollView>
@@ -184,97 +206,150 @@ export default function ConfirmScreen() {
   );
 }
 
-function Field({
-  label,
-  emoji,
-  children,
-}: {
-  label: string;
-  emoji: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.fieldLabel}>
-        {emoji} {label}
-      </Text>
-      {children}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.bg },
-  scroll: { padding: 20, paddingBottom: 48 },
+  safe: {
+    flex: 1,
+    backgroundColor: Colors.bg,
+  },
+  scroll: {
+    padding: 20,
+    paddingBottom: 52,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 18,
   },
   cancelBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.mist,
+    backgroundColor: Colors.bgCard,
+    borderWidth: 1,
+    borderColor: Colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cancelText: { fontSize: 16, color: Colors.text, fontWeight: '700' },
-  title: { fontSize: 18, fontWeight: '800', color: Colors.text },
+  title: {
+    fontSize: 17,
+    fontWeight: '800',
+    fontFamily: FONT,
+    color: Colors.text,
+    letterSpacing: -0.3,
+  },
+  photoWrap: {
+    marginBottom: 14,
+    position: 'relative',
+  },
   photo: {
     width: '100%',
     height: 200,
-    borderRadius: 16,
-    marginBottom: 12,
+    borderRadius: 18,
     backgroundColor: Colors.mist,
   },
   aiBadge: {
-    backgroundColor: Colors.duskBlue,
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    marginBottom: 16,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 5,
+    backgroundColor: Colors.forest,
+    borderRadius: 100,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
   },
-  aiBadgeText: { color: Colors.white, fontSize: 12, fontWeight: '600' },
+  aiBadgeStandalone: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: Colors.freshBg,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: Colors.mist,
+  },
+  aiBadgeText: {
+    color: Colors.white,
+    fontSize: 11,
+    fontWeight: '700',
+    fontFamily: FONT,
+    letterSpacing: 0.5,
+  },
+  aiBadgeTextDark: {
+    color: Colors.forest,
+    fontSize: 11,
+    fontWeight: '700',
+    fontFamily: FONT,
+    letterSpacing: 0.5,
+  },
   card: {
     backgroundColor: Colors.bgCard,
-    borderRadius: 16,
-    padding: 16,
-    gap: 14,
+    borderRadius: 18,
+    paddingHorizontal: 16,
     marginBottom: 20,
-    shadowColor: Colors.deepForest,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    shadowColor: '#1A2A1E',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowRadius: 10,
     elevation: 3,
   },
-  field: { gap: 6 },
-  fieldLabel: { fontSize: 13, fontWeight: '700', color: Colors.textMuted },
+  field: {
+    paddingVertical: 14,
+    gap: 6,
+  },
+  fieldDivider: {
+    height: 1,
+    backgroundColor: Colors.borderLight,
+  },
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    fontFamily: FONT,
+    color: Colors.textMuted,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
   input: {
-    backgroundColor: Colors.bg,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    fontSize: 15,
+    fontSize: 16,
     color: Colors.text,
     fontWeight: '500',
+    fontFamily: FONT,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.bg,
+    borderRadius: 10,
   },
-  row: { flexDirection: 'row', gap: 10 },
-  qtyInput: { width: 80 },
-  unitInput: { flex: 1 },
+  row: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  qtyInput: {
+    width: 80,
+  },
+  unitInput: {
+    flex: 1,
+  },
   sectionLabel: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: '700',
-    color: Colors.text,
+    fontFamily: FONT,
+    color: Colors.textMuted,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
     marginBottom: 10,
   },
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 24,
+    marginBottom: 28,
   },
   catPill: {
     flexDirection: 'row',
@@ -282,29 +357,46 @@ const styles = StyleSheet.create({
     gap: 5,
     backgroundColor: Colors.bgCard,
     borderRadius: 100,
-    paddingVertical: 7,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 13,
     borderWidth: 1.5,
     borderColor: Colors.border,
   },
   catPillActive: {
-    backgroundColor: Colors.tealFern,
-    borderColor: Colors.tealFern,
+    backgroundColor: Colors.forest,
+    borderColor: Colors.forest,
   },
-  catEmoji: { fontSize: 13 },
-  catLabel: { fontSize: 12, fontWeight: '600', color: Colors.text },
-  catLabelActive: { color: Colors.white },
+  catEmoji: {
+    fontSize: 13,
+  },
+  catLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: FONT,
+    color: Colors.text,
+  },
+  catLabelActive: {
+    color: Colors.white,
+  },
   saveBtn: {
-    backgroundColor: Colors.tealFern,
+    backgroundColor: Colors.forest,
     borderRadius: 100,
-    paddingVertical: 16,
+    paddingVertical: 17,
     alignItems: 'center',
-    shadowColor: Colors.tealFern,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowColor: Colors.forest,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.35,
+    shadowRadius: 14,
+    elevation: 8,
   },
-  saveBtnDisabled: { opacity: 0.6 },
-  saveBtnText: { color: Colors.white, fontWeight: '800', fontSize: 16, letterSpacing: 0.3 },
+  saveBtnDisabled: {
+    opacity: 0.6,
+  },
+  saveBtnText: {
+    fontFamily: FONT,
+    color: Colors.white,
+    fontWeight: '800',
+    fontSize: 16,
+    letterSpacing: 0.2,
+  },
 });
