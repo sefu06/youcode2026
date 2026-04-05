@@ -79,6 +79,29 @@ Resources:
             Path: /items
             Method: get
 
+  AddItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: addItem.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          TABLE_NAME: FoodItems
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:PutItem
+              Resource: "*"
+      Events:
+        AddItemApi:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: post
+
   GetAnalyticsFunction:
     Type: AWS::Serverless::Function
     Properties:

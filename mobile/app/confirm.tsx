@@ -16,8 +16,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import { CATEGORIES } from '../constants/categories';
-import { addItem } from '../services/storage';
 import { GeminiResult } from '../services/gemini';
+import { API_BASE_URL, API_KEY, API_TOKEN } from '../config/api';
 
 export default function ConfirmScreen() {
   const { imageUri, data } = useLocalSearchParams<{ imageUri: string; data: string }>();
@@ -35,15 +35,39 @@ export default function ConfirmScreen() {
       Alert.alert('Missing name', 'Please enter a food name.');
       return;
     }
+
     setSaving(true);
     try {
-      await addItem({
+      if (!API_BASE_URL) {
+        throw new Error('Missing API URL. Set EXPO_PUBLIC_API_BASE_URL in mobile/.env.');
+      }
+      if (!API_TOKEN && !API_KEY) {
+        console.warn('No API auth configured. Set EXPO_PUBLIC_API_TOKEN or EXPO_PUBLIC_API_KEY if required.');
+      }
+
+      const payload = {
         foodName: foodName.trim(),
         category,
         quantity: parseInt(quantity, 10) || 1,
         unit: unit.trim(),
         expiryDate,
+      };
+
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (API_TOKEN) headers.Authorization = `Bearer ${API_TOKEN}`;
+      if (API_KEY) headers['x-api-key'] = API_KEY;
+
+      const response = await fetch(`${API_BASE_URL}/items`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
       });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `Request failed: ${response.status}`);
+      }
+
       router.dismissAll();
     } catch (e: any) {
       Alert.alert('Save Failed', e.message ?? 'Could not save item. Try again.');

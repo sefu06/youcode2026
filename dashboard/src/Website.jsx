@@ -273,7 +273,7 @@ function formatExpiry(expiresInDays) {
 }
 
 function getExpiryUrgencyClass(expiresInDays) {
-  if (expiresInDays === 1) {
+  if (expiresInDays === 1 || expiresInDays === 0) {
     return 'expiry-critical'
   }
 
@@ -303,13 +303,14 @@ function Website() {
   const [draftPoint, setDraftPoint] = useState('')
   const [recipeMode, setRecipeMode] = useState('normal')
   const [apiError, setApiError] = useState('')
+  const [removingFoodName, setRemovingFoodName] = useState('')
   const [weeklyCounts, setWeeklyCounts] = useState({ thisWeek: 0, lastWeek: 0 })
   const [heroRef, heroInView] = useInView()
   const [statsRef, statsInView] = useInView()
   const selectedRecipe =
-    recipes.find((recipe) => recipe.id === selectedRecipeId) ?? activeRecipes[0]
-  const featuredRecipe = activeRecipes[0]
-  const alternateRecipes = activeRecipes.slice(1)
+    recipes.find((recipe) => recipe.id === selectedRecipeId) ?? recipes[0]
+  const featuredRecipe = recipes[0]
+  const alternateRecipes = recipes.slice(1)
   const analyticsVisible = activeTab === 'analytics' && statsInView
   const heroVisible = activeTab === 'analytics' && heroInView
   const ringProgress = useCountUp(
@@ -446,7 +447,7 @@ function Website() {
     setRemovingFoodName(foodName)
 
     window.setTimeout(() => {
-      setExpiringList((currentFoods) =>
+      setExpiringFoods((currentFoods) =>
         currentFoods.filter((food) => food.name !== foodName)
       )
       setRemovingFoodName('')
@@ -457,29 +458,6 @@ function Website() {
     setSelectedRecipeId((currentSelected) =>
       currentSelected === recipeId ? '' : currentSelected
     )
-
-    setActiveRecipeIds((currentIds) => {
-      const recipeIndex = currentIds.indexOf(recipeId)
-
-      if (recipeIndex === -1) {
-        return currentIds
-      }
-
-      let nextRecipeId = ''
-
-      setAvailableRecipeIds((currentAvailable) => {
-        nextRecipeId = currentAvailable[0] ?? ''
-        return nextRecipeId ? currentAvailable.slice(1) : currentAvailable
-      })
-
-      const remainingIds = currentIds.filter((id) => id !== recipeId)
-
-      if (!nextRecipeId) {
-        return remainingIds
-      }
-
-      return [...remainingIds, nextRecipeId]
-    })
   }
 
   return (
@@ -597,7 +575,7 @@ function Website() {
                 </div>
 
                 <ol className="expiry-list">
-                  {expiringList.map((food) => (
+                  {expiringFoods.map((food) => (
                     <li
                       key={food.name}
                       className={removingFoodName === food.name ? 'is-removing' : ''}
