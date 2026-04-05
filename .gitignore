@@ -16,6 +16,11 @@ mobile/.expo-shared/
 mobile/android/
 mobile/ios/
 mobile/*.log
+mobile/config/api.ts
+mobile/.metro-health-check*
+mobile/*.tsbuildinfo
+mobile/dist/
+mobile/web-build/
 
 # =========================
 # DASHBOARD (REACT / VITE)
@@ -23,6 +28,7 @@ mobile/*.log
 dashboard/node_modules/
 dashboard/dist/
 dashboard/.env
+dashboard/.env.*
 
 # =========================
 # BACKEND (AWS SAM)
@@ -30,6 +36,7 @@ dashboard/.env
 backend/node_modules/
 backend/.aws-sam/
 backend/.env
+backend/samconfig.toml
 
 # =========================
 # AWS / CREDENTIALS
