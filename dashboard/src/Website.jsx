@@ -830,26 +830,37 @@ function Website() {
 
               <div className="recipe-instructions">
                 <div className="instruction-panel">
-                  <p className="eyebrow">Instructions</p>
-                  <ol className="instruction-list">
-                    {selectedRecipe.instructions.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-
+                  <p className="eyebrow">
+                    {recipeMode === 'period' ? 'Period Support' : 'Instructions'}
+                  </p>
                   {recipeMode === 'period' ? (
                     <div className="period-guidance">
-                      <p className="eyebrow">Period Support</p>
-                      <ul className="period-list">
-                        {selectedRecipe.periodAdjustments.add.map((item) => (
-                          <li key={`period-add-${item}`}>{item}</li>
-                        ))}
-                        {selectedRecipe.periodAdjustments.subtract.map((item) => (
-                          <li key={`period-subtract-${item}`}>{item}</li>
-                        ))}
-                      </ul>
+                      <div className="period-columns">
+                        <div>
+                          <p className="period-subheading">Add for support</p>
+                          <ul className="period-list">
+                            {selectedRecipe.periodAdjustments.add.map((item) => (
+                              <li key={`period-add-${item}`}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <p className="period-subheading">Dial back</p>
+                          <ul className="period-list">
+                            {selectedRecipe.periodAdjustments.subtract.map((item) => (
+                              <li key={`period-subtract-${item}`}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                  ) : null}
+                  ) : (
+                    <ol className="instruction-list">
+                      {selectedRecipe.instructions.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ol>
+                  )}
                 </div>
 
                 <div className="instruction-panel">

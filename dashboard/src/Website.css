@@ -883,6 +883,18 @@ select {
   border-top: 1px solid rgba(79, 103, 95, 0.25);
 }
 
+.period-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.period-subheading {
+  margin: 0 0 6px;
+  font-weight: 600;
+  color: #35534d;
+}
+
 .cookware-heading {
   margin-top: 18px;
 }
