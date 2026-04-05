@@ -88,6 +88,33 @@ select {
   margin-top: 16px;
 }
 
+.hero-title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-support-title {
+  color: #496b6f;
+  max-width: 30ch;
+  margin-bottom: 0;
+}
+
+.hero-title-icon {
+  width: clamp(52px, 5.8vw, 74px);
+  height: clamp(52px, 5.8vw, 74px);
+  object-fit: contain;
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .hero-ring-wrap,
 .chart-card,
 .detail-card,
@@ -118,11 +145,15 @@ select {
   border-radius: 999px;
   background:
     radial-gradient(circle at center, rgba(246, 247, 242, 0.96) 0 53%, transparent 54%),
-    conic-gradient(var(--sage-300) 0 78%, rgba(159, 188, 165, 0.26) 78% 100%);
+    conic-gradient(
+      var(--sage-300) 0 var(--ring-progress, 0%),
+      rgba(159, 188, 165, 0.26) var(--ring-progress, 0%) 100%
+    );
   display: grid;
   place-items: center;
   box-shadow: inset 0 0 0 12px rgba(246, 247, 242, 0.72);
   position: relative;
+  transition: background 0.3s ease;
 }
 
 .inventory-ring::before {
@@ -273,6 +304,26 @@ select {
   align-items: start;
   gap: 16px;
   margin-bottom: 20px;
+}
+
+.expiry-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.expiry-heading-row .eyebrow,
+.expiry-heading-row h2 {
+  margin-bottom: 0;
+}
+
+.expiry-heading-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  align-self: center;
 }
 
 .pill {
@@ -778,6 +829,10 @@ select {
 
   .website-hero h1 {
     max-width: none;
+  }
+
+  .hero-title-row {
+    align-items: center;
   }
 
   .inventory-ring {

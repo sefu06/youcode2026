@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import alertIcon from './assets/icon-alert.svg'
+import bloomIcon from './assets/icon-bloom.svg'
 import yogurtBowlImg from './assets/yogurt-bowl.webp'
 import './Website.css'
 
 const analyticsStats = [
-  { label: 'Items Stored This Week', value: '1,284', detail: '+146 compared to last week' },
-  { label: 'Food Categories Tracked', value: '6', detail: 'Updated from daily intake logs' },
-  { label: 'Urgent Expiry Items', value: '10', detail: 'Needs review within 10 days' },
+  { label: 'Items Stored This Week', value: 1284, detail: '↑ 146 compared to last week' },
+  { label: 'Food Categories Tracked', value: 6, detail: '↑ Updated from daily intake logs' },
+  { label: 'Urgent Expiry Items', value: 10, detail: '↑ Needs review within 10 days' },
 ]
 
 const inventoryCategories = [
@@ -18,16 +20,16 @@ const inventoryCategories = [
 ]
 
 const expiringFoods = [
-  { name: 'Spinach', days: '1 day left' },
-  { name: 'Milk cartons', days: '2 days left' },
-  { name: 'Yogurt cups', days: '3 days left' },
-  { name: 'Strawberries', days: '4 days left' },
-  { name: 'Cooked rice packs', days: '5 days left' },
-  { name: 'Chicken broth', days: '6 days left' },
-  { name: 'Soft tortillas', days: '7 days left' },
-  { name: 'Cheddar blocks', days: '8 days left' },
-  { name: 'Carrot bags', days: '9 days left' },
-  { name: 'Hummus tubs', days: '10 days left' },
+  { name: 'Spinach', expiresInDays: 1 },
+  { name: 'Milk cartons', expiresInDays: 2 },
+  { name: 'Yogurt cups', expiresInDays: 3 },
+  { name: 'Strawberries', expiresInDays: 4 },
+  { name: 'Cooked rice packs', expiresInDays: 5 },
+  { name: 'Chicken broth', expiresInDays: 6 },
+  { name: 'Soft tortillas', expiresInDays: 7 },
+  { name: 'Cheddar blocks', expiresInDays: 8 },
+  { name: 'Carrot bags', expiresInDays: 9 },
+  { name: 'Hummus tubs', expiresInDays: 10 },
 ]
 
 const recipes = [
@@ -102,6 +104,86 @@ const recipes = [
   },
 ]
 
+function useInView() {
+  const ref = useRef(null)
+  const [isInView, setIsInView] = useState(false)
+
+  useEffect(() => {
+    const currentRef = ref.current
+
+    if (!currentRef) {
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      { threshold: 0.35 }
+    )
+
+    observer.observe(currentRef)
+
+    return () => observer.disconnect()
+  }, [])
+
+  return [ref, isInView]
+}
+
+function useCountUp(target, shouldAnimate, duration = 1100) {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!shouldAnimate) {
+      return undefined
+    }
+
+    let animationFrameId
+    let startTimestamp
+
+    const step = (timestamp) => {
+      if (startTimestamp === undefined) {
+        startTimestamp = timestamp
+      }
+
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+      setCount(Math.round(target * progress))
+
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(step)
+      } else {
+        setCount(target)
+      }
+    }
+
+    animationFrameId = window.requestAnimationFrame(step)
+
+    return () => window.cancelAnimationFrame(animationFrameId)
+  }, [duration, shouldAnimate, target])
+
+  return count
+}
+
+function formatStatValue(value) {
+  return value.toLocaleString()
+}
+
+function formatExpiry(expiresInDays) {
+  if (expiresInDays <= 5) {
+    return `${expiresInDays} day${expiresInDays === 1 ? '' : 's'} left`
+  }
+
+  const expiryDate = new Date()
+  expiryDate.setHours(0, 0, 0, 0)
+  expiryDate.setDate(expiryDate.getDate() + expiresInDays)
+
+  const month = String(expiryDate.getMonth() + 1).padStart(2, '0')
+  const day = String(expiryDate.getDate()).padStart(2, '0')
+  const year = expiryDate.getFullYear()
+
+  return `${month}/${day}/${year}`
+}
+
 function Website() {
   const [activeTab, setActiveTab] = useState('analytics')
   const [selectedRecipeId, setSelectedRecipeId] = useState('')
@@ -113,10 +195,19 @@ function Website() {
   const [editingSummaryIndex, setEditingSummaryIndex] = useState(null)
   const [draftPoint, setDraftPoint] = useState('')
   const [recipeMode, setRecipeMode] = useState('normal')
+  const [heroRef, heroInView] = useInView()
+  const [statsRef, statsInView] = useInView()
   const topInventoryCategories = inventoryCategories.slice(0, 4)
   const selectedRecipe =
     recipes.find((recipe) => recipe.id === selectedRecipeId) ?? recipes[0]
   const alternateRecipes = recipes.filter((recipe) => recipe.id !== recipes[0].id)
+  const analyticsVisible = activeTab === 'analytics' && statsInView
+  const heroVisible = activeTab === 'analytics' && heroInView
+  const ringProgress = useCountUp(78, heroVisible, 1200)
+  const storedItemsCount = useCountUp(analyticsStats[0].value, analyticsVisible, 1000)
+  const categoryCount = useCountUp(analyticsStats[1].value, analyticsVisible, 1000)
+  const urgentExpiryCount = useCountUp(analyticsStats[2].value, analyticsVisible, 1000)
+  const animatedStats = [storedItemsCount, categoryCount, urgentExpiryCount]
 
   const openRecipe = (recipeId) => {
     setSelectedRecipeId(recipeId)
@@ -157,13 +248,21 @@ function Website() {
 
   return (
     <main className="website-shell">
-      <section className="website-hero">
-        <div>
-          <p className="eyebrow">Food Inventory Dashboard</p>
-          <h1>Bloom Pantry</h1>
+      <section className="website-hero" ref={heroRef}>
+        <div className="hero-title-block">
+          <p className="eyebrow hero-support-title">
+            Food Inventory Organizer To Keep Track Of All Goods
+          </p>
+          <div className="hero-title-row">
+            <h1>Bloom Pantry</h1>
+            <img className="hero-title-icon" src={bloomIcon} alt="" />
+          </div>
         </div>
         <div className="hero-ring-wrap" aria-label="Inventory growth this week">
-          <div className="inventory-ring">
+          <div
+            className="inventory-ring"
+            style={{ '--ring-progress': `${ringProgress}%` }}
+          >
             <div className="inventory-ring-inner">
               <span className="ring-kicker">Inventory up</span>
               <strong>14%</strong>
@@ -200,11 +299,11 @@ function Website() {
 
         {activeTab === 'analytics' ? (
           <section className="analytics-grid">
-            <div className="stats-row">
-              {analyticsStats.map((stat) => (
+            <div className="stats-row" ref={statsRef}>
+              {analyticsStats.map((stat, index) => (
                 <article key={stat.label} className="stat-card">
                   <p>{stat.label}</p>
-                  <h2>{stat.value}</h2>
+                  <h2>{formatStatValue(animatedStats[index])}</h2>
                   <span>{stat.detail}</span>
                 </article>
               ))}
@@ -235,9 +334,12 @@ function Website() {
 
               <article className="detail-card">
                 <div className="section-heading">
-                  <div>
-                    <p className="eyebrow">Expiring Soon</p>
-                    <h2>Top 10 foods to use first</h2>
+                  <div className="expiry-heading-row">
+                    <div>
+                      <p className="eyebrow">Expiring Soon</p>
+                      <h2>Top 10 foods to use first</h2>
+                    </div>
+                    <img className="expiry-heading-icon" src={alertIcon} alt="" />
                   </div>
                 </div>
 
@@ -245,7 +347,7 @@ function Website() {
                   {expiringFoods.map((food) => (
                     <li key={food.name}>
                       <span>{food.name}</span>
-                      <strong>{food.days}</strong>
+                      <strong>{formatExpiry(food.expiresInDays)}</strong>
                     </li>
                   ))}
                 </ol>
