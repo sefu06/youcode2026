@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import alertIcon from './assets/icon-alert.svg'
 import bloomIcon from './assets/icon-bloom.svg'
+import friedRiceImg from './assets/cartoon-delicious-egg-fried-rice-illustration_561641-28564.png'
+import pastaImg from './assets/pasta-with-basil-leaves-in-a-bowl-illustration-vector.png'
+import sandwichImg from './assets/sandwich-drawings-10.png'
+import soupImg from './assets/soup.png'
+import tacoImg from './assets/taco.png'
 import yogurtBowlImg from './assets/yogurt-bowl.webp'
 import './Website.css'
 
@@ -12,6 +17,7 @@ const recipes = [
     title: 'Berry Yogurt Smoothie Cups',
     time: '15 min',
     tag: 'Quick Use',
+    image: yogurtBowlImg,
     summary: 'A fast breakfast snack that clears out dairy and fruit close to expiry.',
     expiringIngredients: [
       { name: 'Yogurt cups', stock: '18 in stock', status: 'Expiring in 3 days' },
@@ -19,13 +25,14 @@ const recipes = [
       { name: 'Milk cartons', stock: '6 in stock', status: 'Expiring in 2 days' },
     ],
     pantryIngredients: ['Honey', 'Bananas', 'Granola'],
+    cookware: ['Blender', 'Knife', 'Cutting board', 'Serving cups'],
     periodAdjustments: {
       add: ['Add chia seeds for extra magnesium.', 'Add extra yogurt or milk for more calcium.'],
       subtract: ['Reduce added honey if sugar sensitivity is an issue.'],
     },
     instructions: [
-      'Wash and slice the strawberries, then blend with yogurt and a small amount of milk.',
-      'Add honey if needed and portion the smoothie into cups.',
+      'Using a knife and cutting board, wash and slice the strawberries, then add them to a blender with yogurt and a small amount of milk.',
+      'Blend until smooth, add honey if needed, and portion the smoothie into serving cups.',
       'Top with granola right before serving so it stays crisp.',
     ],
     recommended: ['Fruit and Yogurt Cups', 'Strawberry Oat Parfaits'],
@@ -35,6 +42,7 @@ const recipes = [
     title: 'Spinach Cheddar Breakfast Wraps',
     time: '20 min',
     tag: 'Hot Meal',
+    image: sandwichImg,
     summary: 'A simple wrap recipe built around greens, dairy, and tortillas that should be used soon.',
     expiringIngredients: [
       { name: 'Spinach', stock: '4 bags in stock', status: 'Expiring in 1 day' },
@@ -42,14 +50,15 @@ const recipes = [
       { name: 'Cheddar blocks', stock: '5 blocks in stock', status: 'Expiring in 8 days' },
     ],
     pantryIngredients: ['Eggs', 'Salt', 'Pepper'],
+    cookware: ['Saute pan', 'Mixing bowl', 'Spatula'],
     periodAdjustments: {
       add: ['Add extra cheddar or a spoon of Greek yogurt for calcium.', 'Add spinach generously for iron support.'],
       subtract: ['Reduce salt if bloating is a concern.'],
     },
     instructions: [
-      'Saute the spinach for 2 to 3 minutes until wilted.',
-      'Scramble eggs in a separate pan, then mix in shredded cheddar.',
-      'Fill each tortilla with the egg mixture and spinach, then fold and warm before serving.',
+      'Heat a saute pan and cook the spinach for 2 to 3 minutes until wilted.',
+      'In a mixing bowl, whisk the eggs, then scramble them in the pan and mix in shredded cheddar with a spatula.',
+      'Fill each tortilla with the egg mixture and spinach, then fold and warm in the pan before serving.',
     ],
     recommended: ['Spinach Quesadillas', 'Cheddar Veggie Melts'],
   },
@@ -58,6 +67,7 @@ const recipes = [
     title: 'Carrot Broth Soup',
     time: '30 min',
     tag: 'Batch Cook',
+    image: soupImg,
     summary: 'A warming soup that helps use vegetables and broth before they need to be discarded.',
     expiringIngredients: [
       { name: 'Carrot bags', stock: '7 bags in stock', status: 'Expiring in 9 days' },
@@ -65,16 +75,92 @@ const recipes = [
       { name: 'Hummus tubs', stock: '8 tubs in stock', status: 'Expiring in 10 days' },
     ],
     pantryIngredients: ['Onions', 'Garlic', 'Cumin'],
+    cookware: ['Soup pot', 'Knife', 'Cutting board', 'Blender or immersion blender'],
     periodAdjustments: {
       add: ['Add lentils or beans for extra iron.', 'Add a spoon of yogurt on top for calcium if available.'],
       subtract: ['Reduce heavy seasoning if a lighter meal is preferred.'],
     },
     instructions: [
-      'Cook chopped onions and garlic until soft, then add sliced carrots.',
-      'Pour in the chicken broth and simmer until the carrots are tender.',
-      'Blend until smooth and serve with a spoon of hummus swirled in for extra richness.',
+      'Using a knife and cutting board, chop the onions, garlic, and carrots, then cook them in a soup pot until softened.',
+      'Pour in the chicken broth and simmer in the pot until the carrots are tender.',
+      'Blend with a blender or immersion blender until smooth, then serve with a spoon of hummus swirled in for extra richness.',
     ],
     recommended: ['Roasted Carrot Mash', 'Vegetable and Broth Rice Bowl'],
+  },
+  {
+    id: 'pasta',
+    title: 'Tomato Basil Pasta Bowl',
+    time: '25 min',
+    tag: 'Comfort',
+    image: pastaImg,
+    summary: 'A warm pasta recipe that uses pantry staples and softer produce before expiry.',
+    expiringIngredients: [
+      { name: 'Tomatoes', stock: '10 in stock', status: 'Expiring in 4 days' },
+      { name: 'Milk cartons', stock: '4 in stock', status: 'Expiring in 2 days' },
+      { name: 'Cheddar blocks', stock: '3 blocks in stock', status: 'Expiring in 8 days' },
+    ],
+    pantryIngredients: ['Pasta', 'Garlic', 'Olive oil'],
+    cookware: ['Pot', 'Pan', 'Colander', 'Wooden spoon'],
+    periodAdjustments: {
+      add: ['Add spinach or kale for extra iron.', 'Add cheese or milk for more calcium.'],
+      subtract: ['Reduce spicy seasoning if a milder meal is preferred.'],
+    },
+    instructions: [
+      'Boil the pasta in a pot until tender, then drain with a colander.',
+      'Use a pan to cook tomatoes and garlic until soft, then stir in a small amount of milk and shredded cheese.',
+      'Toss the pasta into the pan and stir with a wooden spoon before serving.',
+    ],
+    recommended: ['Creamy Tomato Cups', 'Basil Pasta Bake'],
+  },
+  {
+    id: 'tacos',
+    title: 'Bean Veggie Taco Boats',
+    time: '18 min',
+    tag: 'Fast Meal',
+    image: tacoImg,
+    summary: 'A quick taco meal that uses tortillas, beans, and vegetables that need to be rotated out.',
+    expiringIngredients: [
+      { name: 'Soft tortillas', stock: '12 in stock', status: 'Expiring in 7 days' },
+      { name: 'Spinach', stock: '2 bags in stock', status: 'Expiring in 1 day' },
+      { name: 'Cheddar blocks', stock: '2 blocks in stock', status: 'Expiring in 8 days' },
+    ],
+    pantryIngredients: ['Beans', 'Corn', 'Mild salsa'],
+    cookware: ['Pan', 'Spatula', 'Knife'],
+    periodAdjustments: {
+      add: ['Add beans for iron and extra protein.', 'Add cheese for calcium support.'],
+      subtract: ['Reduce salty toppings if needed.'],
+    },
+    instructions: [
+      'Warm the tortillas in a pan until soft.',
+      'Heat beans, corn, and chopped spinach in the same pan using a spatula.',
+      'Fill each tortilla with the mixture and top with cheese before serving.',
+    ],
+    recommended: ['Bean Melt Wraps', 'Veggie Taco Cups'],
+  },
+  {
+    id: 'rice-bowl',
+    title: 'Vegetable Fried Rice Bowl',
+    time: '22 min',
+    tag: 'Pantry',
+    image: friedRiceImg,
+    summary: 'A flexible rice bowl that helps use broth, vegetables, and leftover rice quickly.',
+    expiringIngredients: [
+      { name: 'Cooked rice packs', stock: '6 in stock', status: 'Expiring in 5 days' },
+      { name: 'Carrot bags', stock: '4 bags in stock', status: 'Expiring in 9 days' },
+      { name: 'Chicken broth', stock: '5 cartons in stock', status: 'Expiring in 6 days' },
+    ],
+    pantryIngredients: ['Eggs', 'Soy sauce', 'Green onions'],
+    cookware: ['Wok or pan', 'Spatula', 'Knife'],
+    periodAdjustments: {
+      add: ['Add an egg for protein and iron support.', 'Add extra greens if available.'],
+      subtract: ['Reduce soy sauce if sodium needs to stay lower.'],
+    },
+    instructions: [
+      'Dice the vegetables with a knife and heat them in a wok or pan.',
+      'Add the rice and a splash of broth, then stir with a spatula until heated through.',
+      'Mix in egg and green onions at the end, then season lightly with soy sauce.',
+    ],
+    recommended: ['Veggie Rice Cups', 'Broth Rice Stir Fry'],
   },
 ]
 
@@ -158,6 +244,18 @@ function formatExpiry(expiresInDays) {
   return `${month}/${day}/${year}`
 }
 
+function getExpiryUrgencyClass(expiresInDays) {
+  if (expiresInDays === 1) {
+    return 'expiry-critical'
+  }
+
+  if (expiresInDays === 2 || expiresInDays === 3) {
+    return 'expiry-warning'
+  }
+
+  return ''
+}
+
 function Website() {
   const [activeTab, setActiveTab] = useState('analytics')
   const [selectedRecipeId, setSelectedRecipeId] = useState('')
@@ -180,8 +278,9 @@ function Website() {
   const [heroRef, heroInView] = useInView()
   const [statsRef, statsInView] = useInView()
   const selectedRecipe =
-    recipes.find((recipe) => recipe.id === selectedRecipeId) ?? recipes[0]
-  const alternateRecipes = recipes.filter((recipe) => recipe.id !== recipes[0].id)
+    recipes.find((recipe) => recipe.id === selectedRecipeId) ?? activeRecipes[0]
+  const featuredRecipe = activeRecipes[0]
+  const alternateRecipes = activeRecipes.slice(1)
   const analyticsVisible = activeTab === 'analytics' && statsInView
   const heroVisible = activeTab === 'analytics' && heroInView
   const ringProgress = useCountUp(78, heroVisible, 1200)
@@ -305,6 +404,46 @@ function Website() {
     setDraftPoint('')
   }
 
+  const removeExpiringFood = (foodName) => {
+    setRemovingFoodName(foodName)
+
+    window.setTimeout(() => {
+      setExpiringList((currentFoods) =>
+        currentFoods.filter((food) => food.name !== foodName)
+      )
+      setRemovingFoodName('')
+    }, 220)
+  }
+
+  const completeRecipe = (recipeId) => {
+    setSelectedRecipeId((currentSelected) =>
+      currentSelected === recipeId ? '' : currentSelected
+    )
+
+    setActiveRecipeIds((currentIds) => {
+      const recipeIndex = currentIds.indexOf(recipeId)
+
+      if (recipeIndex === -1) {
+        return currentIds
+      }
+
+      let nextRecipeId = ''
+
+      setAvailableRecipeIds((currentAvailable) => {
+        nextRecipeId = currentAvailable[0] ?? ''
+        return nextRecipeId ? currentAvailable.slice(1) : currentAvailable
+      })
+
+      const remainingIds = currentIds.filter((id) => id !== recipeId)
+
+      if (!nextRecipeId) {
+        return remainingIds
+      }
+
+      return [...remainingIds, nextRecipeId]
+    })
+  }
+
   return (
     <main className="website-shell">
       {apiError ? (
@@ -373,29 +512,41 @@ function Website() {
               ))}
             </div>
 
-            <div className="analytics-columns">
-              <article className="chart-card">
-                <div className="section-heading">
-                  <div>
-                    <p className="eyebrow">Stored Inventory</p>
-                    <h2>Food categories this week</h2>
-                  </div>
-                  <span className="pill">Current stock</span>
+            <article className="chart-card inventory-bar-card">
+              <div className="section-heading">
+                <div>
+                  <p className="eyebrow">Stored Inventory</p>
+                  <h2>Food categories this week</h2>
+                </div>
+                <span className="pill">Current stock</span>
+              </div>
+
+              <div className="inventory-bar-chart" aria-label="Food category bar graph">
+                <div className="inventory-y-axis" aria-hidden="true">
+                  <span>35%</span>
+                  <span>25%</span>
+                  <span>15%</span>
+                  <span>5%</span>
+                  <span>0%</span>
                 </div>
 
-                <div className="category-list">
-                  {topInventoryCategories.map((item) => (
-                    <div key={item.category} className="category-row">
-                      <div>
-                        <h3>{item.category}</h3>
-                        <p>{item.amount}</p>
-                      </div>
-                      <span className="category-share">{item.share}</span>
+                {inventoryCategories.map((item) => (
+                  <div key={item.category} className="inventory-bar-group">
+                    <span className="inventory-bar-value">{item.amount}</span>
+                    <div className="inventory-bar-track">
+                      <div
+                        className="inventory-bar-fill"
+                        style={{ height: item.share }}
+                      />
                     </div>
-                  ))}
-                </div>
-              </article>
+                    <p className="inventory-bar-label">{item.category}</p>
+                    <span className="inventory-bar-share">{item.share}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
 
+            <div className="analytics-columns">
               <article className="detail-card">
                 <div className="section-heading">
                   <div className="expiry-heading-row">
@@ -408,144 +559,200 @@ function Website() {
                 </div>
 
                 <ol className="expiry-list">
-                  {expiringFoods.map((food) => (
-                    <li key={food.name}>
+                  {expiringList.map((food) => (
+                    <li
+                      key={food.name}
+                      className={removingFoodName === food.name ? 'is-removing' : ''}
+                    >
                       <span>{food.name}</span>
-                      <strong>{formatExpiry(food.expiresInDays)}</strong>
+                      <div className="expiry-item-actions">
+                        <strong className={getExpiryUrgencyClass(food.expiresInDays)}>
+                          {formatExpiry(food.expiresInDays)}
+                        </strong>
+                        <button
+                          type="button"
+                          className="expiry-check-button"
+                          onClick={() => removeExpiringFood(food.name)}
+                          aria-label={`Mark ${food.name} as handled`}
+                        >
+                          ✓
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ol>
               </article>
-            </div>
 
-            <article className="summary-card">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">Weekly Summary</p>
-                  <h2>Inventory notes</h2>
+              <article className="summary-card">
+                <div className="section-heading">
+                  <div>
+                    <p className="eyebrow">Weekly Summary</p>
+                    <h2>Inventory notes</h2>
+                  </div>
                 </div>
-              </div>
 
-              <ul className="highlight-list">
-                {weeklySummary.map((item, index) => (
-                  <li key={`summary-${index}`}>
-                    <div className="summary-item">
-                      {editingSummaryIndex === index ? (
-                        <textarea
-                          className="summary-input"
-                          value={item}
-                          onChange={(event) =>
-                            updateWeeklySummary(index, event.target.value)
-                          }
-                          rows={2}
-                        />
-                      ) : (
-                        <p className="summary-text">{item}</p>
-                      )}
+                <ul className="highlight-list">
+                  {weeklySummary.map((item, index) => (
+                    <li key={`summary-${index}`}>
+                      <div className="summary-item">
+                        {editingSummaryIndex === index ? (
+                          <textarea
+                            className="summary-input"
+                            value={item}
+                            onChange={(event) =>
+                              updateWeeklySummary(index, event.target.value)
+                            }
+                            rows={2}
+                          />
+                        ) : (
+                          <p className="summary-text">{item}</p>
+                        )}
 
-                      <div className="summary-actions">
-                        <button
-                          type="button"
-                          className="summary-action-button"
-                          onClick={() =>
-                            setEditingSummaryIndex(
-                              editingSummaryIndex === index ? null : index
-                            )
-                          }
-                        >
-                          {editingSummaryIndex === index ? 'Done' : 'Edit'}
-                        </button>
-                        <button
-                          type="button"
-                          className="summary-action-button delete"
-                          onClick={() => deleteWeeklySummary(index)}
-                        >
-                          Delete
-                        </button>
+                        <div className="summary-actions">
+                          <button
+                            type="button"
+                            className="summary-action-button"
+                            onClick={() =>
+                              setEditingSummaryIndex(
+                                editingSummaryIndex === index ? null : index
+                              )
+                            }
+                          >
+                            {editingSummaryIndex === index ? 'Done' : 'Edit'}
+                          </button>
+                          <button
+                            type="button"
+                            className="summary-action-button delete"
+                            onClick={() => deleteWeeklySummary(index)}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
 
-              <div className="summary-add-row">
-                <textarea
-                  className="summary-add-input"
-                  value={draftPoint}
-                  onChange={(event) => setDraftPoint(event.target.value)}
-                  placeholder="Add a point here"
-                  rows={2}
-                />
-                <button
-                  type="button"
-                  className="summary-add-button"
-                  onClick={addWeeklySummary}
-                >
-                  Add Point
-                </button>
-              </div>
-            </article>
+                <div className="summary-add-row">
+                  <textarea
+                    className="summary-add-input"
+                    value={draftPoint}
+                    onChange={(event) => setDraftPoint(event.target.value)}
+                    placeholder="Add a point here"
+                    rows={2}
+                  />
+                  <button
+                    type="button"
+                    className="summary-add-button"
+                    onClick={addWeeklySummary}
+                  >
+                    Add Point
+                  </button>
+                </div>
+              </article>
+            </div>
           </section>
         ) : (
           <section className="recipes-grid">
-            <button
-              type="button"
+            <article
               className="feature-recipe"
-              onClick={() => openRecipe(recipes[0].id)}
+              role="button"
+              tabIndex={0}
+              onClick={() => openRecipe(featuredRecipe.id)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+                  openRecipe(featuredRecipe.id)
+                }
+              }}
             >
+              <button
+                type="button"
+                className="recipe-complete-button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  completeRecipe(featuredRecipe.id)
+                }}
+                aria-label={`Mark ${featuredRecipe.title} as completed`}
+              >
+                ✓
+              </button>
+
               <div className="feature-recipe-content">
                 <div className="feature-recipe-copy">
                   <p className="eyebrow">Featured Recipe</p>
-                  <h2>{recipes[0].title}</h2>
-                  <p>{recipes[0].summary}</p>
-                  <div className="recipe-meta">
-                    <span className="recipe-time">Prep: 10 min</span>
-                    <span className="recipe-time">Cook: {recipes[0].time}</span>
-                    <span className="recipe-time">Serves: 8</span>
-                  </div>
+                  <h2>{featuredRecipe.title}</h2>
+                  <p>{featuredRecipe.summary}</p>
                 </div>
 
                 <div className="featured-recipe-art" aria-hidden="true">
                   <div className="yogurt-spot"></div>
                   <img
                     className="featured-recipe-image"
-                    src={yogurtBowlImg}
+                    src={featuredRecipe.image ?? yogurtBowlImg}
                     alt=""
                   />
                 </div>
               </div>
 
               <div className="feature-recipe-actions">
-                <span className="pill">Quick Use</span>
-                <span className="pill">Uses 3 expiring items</span>
+                <span className="pill">{featuredRecipe.tag}</span>
+                <span className="pill">
+                  Uses {featuredRecipe.expiringIngredients.length} expiring items
+                </span>
+              </div>
+              <div className="recipe-footer-meta">
+                <span className="recipe-time">Prep: 10 min</span>
+                <span className="recipe-time">Cook: {featuredRecipe.time}</span>
+                <span className="recipe-time">Serves: 8</span>
               </div>
               <button
                 type="button"
                 className="recipe-open-button"
                 onClick={(event) => {
                   event.stopPropagation()
-                  openRecipe(recipes[0].id)
+                  openRecipe(featuredRecipe.id)
                 }}
               >
                 View recipe details
               </button>
-            </button>
+            </article>
 
             <div className="recipe-card-row">
               {alternateRecipes.map((recipe) => (
-                <button
+                <article
                   key={recipe.id}
-                  type="button"
                   className="recipe-card"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => openRecipe(recipe.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault()
+                      openRecipe(recipe.id)
+                    }
+                  }}
                 >
+                  <button
+                    type="button"
+                    className="recipe-complete-button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      completeRecipe(recipe.id)
+                    }}
+                    aria-label={`Mark ${recipe.title} as completed`}
+                  >
+                    ✓
+                  </button>
                   <div className="recipe-card-top">
                     <span className="pill">{recipe.tag}</span>
-                    <span className="recipe-time">{recipe.time}</span>
                   </div>
                   <h3>{recipe.title}</h3>
                   <p>{recipe.summary}</p>
-                </button>
+                  <div className="recipe-footer-meta">
+                    <span className="recipe-time">{recipe.time}</span>
+                  </div>
+                </article>
               ))}
             </div>
           </section>
@@ -613,15 +820,6 @@ function Website() {
                       <li key={step}>{step}</li>
                     ))}
                   </ol>
-                </div>
-
-                <div className="instruction-panel">
-                  <p className="eyebrow">Ingredients Needed</p>
-                  <ul className="recommended-list">
-                    {selectedRecipe.pantryIngredients.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
 
                   {recipeMode === 'period' ? (
                     <div className="period-guidance">
@@ -636,6 +834,22 @@ function Website() {
                       </ul>
                     </div>
                   ) : null}
+                </div>
+
+                <div className="instruction-panel">
+                  <p className="eyebrow">Ingredients Needed</p>
+                  <ul className="recommended-list">
+                    {selectedRecipe.pantryIngredients.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+
+                  <p className="eyebrow cookware-heading">Utensils and Cookware</p>
+                  <ul className="recommended-list">
+                    {selectedRecipe.cookware.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </article>
