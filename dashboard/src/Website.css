@@ -88,6 +88,33 @@ select {
   margin-top: 16px;
 }
 
+.hero-title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-support-title {
+  color: #496b6f;
+  max-width: 30ch;
+  margin-bottom: 0;
+}
+
+.hero-title-icon {
+  width: clamp(52px, 5.8vw, 74px);
+  height: clamp(52px, 5.8vw, 74px);
+  object-fit: contain;
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .hero-ring-wrap,
 .chart-card,
 .detail-card,
@@ -118,11 +145,15 @@ select {
   border-radius: 999px;
   background:
     radial-gradient(circle at center, rgba(246, 247, 242, 0.96) 0 53%, transparent 54%),
-    conic-gradient(var(--sage-300) 0 78%, rgba(159, 188, 165, 0.26) 78% 100%);
+    conic-gradient(
+      var(--sage-300) 0 var(--ring-progress, 0%),
+      rgba(159, 188, 165, 0.26) var(--ring-progress, 0%) 100%
+    );
   display: grid;
   place-items: center;
   box-shadow: inset 0 0 0 12px rgba(246, 247, 242, 0.72);
   position: relative;
+  transition: background 0.3s ease;
 }
 
 .inventory-ring::before {
@@ -208,20 +239,20 @@ select {
 .analytics-grid,
 .recipes-grid {
   display: grid;
-  gap: 20px;
+  gap: 40px;
 }
 
 .analytics-columns {
   display: grid;
-  grid-template-columns: 1.2fr 0.9fr;
-  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
 }
 
 .stats-row,
 .recipe-card-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 28px;
 }
 
 .stat-card {
@@ -275,6 +306,26 @@ select {
   margin-bottom: 20px;
 }
 
+.expiry-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.expiry-heading-row .eyebrow,
+.expiry-heading-row h2 {
+  margin-bottom: 0;
+}
+
+.expiry-heading-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .pill {
   background: #496b6f;
   color: #f6f7f2;
@@ -284,27 +335,76 @@ select {
   font-weight: 700;
 }
 
-.category-list {
+.inventory-bar-card {
+  padding: 32px 32px 28px;
+}
+
+.inventory-bar-chart {
   display: grid;
-  gap: 14px;
+  grid-template-columns: 64px repeat(8, minmax(0, 1fr));
+  gap: 18px;
+  align-items: end;
+  min-height: 400px;
+  padding-top: 12px;
 }
 
-.category-row {
+.inventory-y-axis {
+  height: 260px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  border-radius: 18px;
+  align-items: flex-end;
+  color: #496b6f;
+  font-size: 0.8rem;
+  padding-right: 10px;
+  border-right: 2px solid rgba(73, 107, 111, 0.35);
 }
 
-.category-share {
-  min-width: 62px;
+.inventory-bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  position: relative;
+}
+
+.inventory-bar-value {
+  color: #496b6f;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.inventory-bar-track {
+  width: 100%;
+  height: 220px;
+  background:
+    linear-gradient(to top, rgba(73, 107, 111, 0.14) 1px, transparent 1px);
+  background-size: 100% 25%;
+  display: flex;
+  align-items: end;
+  padding: 0 10px 0 10px;
+  border-bottom: 2px solid rgba(73, 107, 111, 0.35);
+}
+
+.inventory-bar-fill {
+  width: 100%;
+  border-radius: 0;
+  background: linear-gradient(180deg, #6d9c90 0%, #496b6f 100%);
+  border: 1px solid rgba(47, 62, 70, 0.18);
+}
+
+.inventory-bar-label {
+  margin: 0;
+  color: #4f675f;
+  font-size: 0.86rem;
+  line-height: 1.3;
   text-align: center;
-  padding: 10px 12px;
-  border-radius: 999px;
-  background: #496b6f;
-  color: #f6f7f2;
+}
+
+.inventory-bar-share {
+  color: #496b6f;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -323,13 +423,57 @@ select {
 .expiry-list li {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(159, 188, 165, 0.28);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.expiry-list li.is-removing {
+  opacity: 0;
+  transform: translateX(8px);
+  text-decoration: line-through;
+}
+
+.expiry-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.expiry-check-button {
+  border: 0;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  background: #496b6f;
+  color: #f6f7f2;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.expiry-check-button:hover {
+  background: #9fbca5;
+  color: #496b6f;
+  transform: translateY(-1px);
 }
 
 .expiry-list li strong {
   color: var(--text-main);
+}
+
+.expiry-list li strong.expiry-warning {
+  color: #d6a75e;
+}
+
+.expiry-list li strong.expiry-critical {
+  color: #a94a3b;
 }
 
 .highlight-list {
@@ -437,6 +581,7 @@ select {
 }
 
 .feature-recipe {
+  position: relative;
   border-color: rgba(73, 107, 111, 0.18);
   text-align: left;
   cursor: pointer;
@@ -472,6 +617,14 @@ select {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.recipe-footer-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   margin-top: 18px;
 }
 
@@ -496,6 +649,7 @@ select {
 }
 
 .recipe-card {
+  position: relative;
   padding: 22px;
   text-align: left;
   border: 1px solid rgba(73, 107, 111, 0.18);
@@ -518,6 +672,31 @@ select {
 
 .recipe-card h3 {
   margin-bottom: 10px;
+}
+
+.recipe-complete-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  background: rgba(246, 247, 242, 0.92);
+  color: #496b6f;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(47, 62, 70, 0.12);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.recipe-complete-button:hover {
+  background: #9fbca5;
+  color: #496b6f;
+  transform: translateY(-1px);
 }
 
 .recipe-card h3,
@@ -704,6 +883,10 @@ select {
   border-top: 1px solid rgba(79, 103, 95, 0.25);
 }
 
+.cookware-heading {
+  margin-top: 18px;
+}
+
 .period-list {
   margin: 0;
   padding-left: 20px;
@@ -745,6 +928,7 @@ select {
   }
 
   .analytics-columns,
+  .inventory-bar-chart,
   .feature-recipe-content,
   .recipe-instructions,
   .stats-row,
@@ -780,8 +964,23 @@ select {
     max-width: none;
   }
 
+  .hero-title-row {
+    align-items: center;
+  }
+
   .inventory-ring {
     width: min(220px, 100%);
+  }
+
+  .inventory-y-axis {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: 0;
+    padding-bottom: 8px;
+    border-right: 0;
+    border-bottom: 2px solid rgba(73, 107, 111, 0.35);
   }
 
   .category-row,
@@ -789,6 +988,11 @@ select {
   .ingredient-row {
     align-items: start;
     flex-direction: column;
+  }
+
+  .expiry-item-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .ingredient-stock {
