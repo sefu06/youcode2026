@@ -4,7 +4,7 @@
 
 <img width="1935" height="1088" alt="Screenshot 2026-04-05 112055" src="https://github.com/user-attachments/assets/b2aef41b-c8d1-400b-a567-3e17a43c0988" />
 
-> devpost link: *not available*
+> devpost link: https://devpost.com/software/bloom-pantry
 ---
 
 ## About
