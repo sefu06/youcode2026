@@ -228,6 +228,34 @@ function formatStatValue(value) {
   return value.toLocaleString()
 }
 
+function countByWeek(items) {
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+
+  const startOfThisWeek = new Date(now)
+  startOfThisWeek.setDate(now.getDate() - 7)
+
+  const startOfLastWeek = new Date(now)
+  startOfLastWeek.setDate(now.getDate() - 14)
+
+  let thisWeek = 0
+  let lastWeek = 0
+
+  for (const item of items) {
+    const createdAt = new Date(item.createdAt || item.creationDate || item.loggedAt || 0)
+    if (Number.isNaN(createdAt.getTime())) continue
+    createdAt.setHours(0, 0, 0, 0)
+
+    if (createdAt >= startOfThisWeek) {
+      thisWeek++
+    } else if (createdAt >= startOfLastWeek && createdAt < startOfThisWeek) {
+      lastWeek++
+    }
+  }
+
+  return { thisWeek, lastWeek }
+}
+
 function formatExpiry(expiresInDays) {
   if (expiresInDays <= 5) {
     return `${expiresInDays} day${expiresInDays === 1 ? '' : 's'} left`
@@ -275,6 +303,7 @@ function Website() {
   const [draftPoint, setDraftPoint] = useState('')
   const [recipeMode, setRecipeMode] = useState('normal')
   const [apiError, setApiError] = useState('')
+  const [weeklyCounts, setWeeklyCounts] = useState({ thisWeek: 0, lastWeek: 0 })
   const [heroRef, heroInView] = useInView()
   const [statsRef, statsInView] = useInView()
   const selectedRecipe =
@@ -283,7 +312,15 @@ function Website() {
   const alternateRecipes = activeRecipes.slice(1)
   const analyticsVisible = activeTab === 'analytics' && statsInView
   const heroVisible = activeTab === 'analytics' && heroInView
-  const ringProgress = useCountUp(78, heroVisible, 1200)
+  const ringProgress = useCountUp(
+    weeklyCounts.lastWeek
+      ? Math.min(Math.round((weeklyCounts.thisWeek / weeklyCounts.lastWeek) * 100), 200)
+      : weeklyCounts.thisWeek
+      ? 100
+      : 0,
+    heroVisible,
+    1200
+  )
   const storedItemsCount = useCountUp(analyticsStats[0].value, analyticsVisible, 1000)
   const categoryCount = useCountUp(analyticsStats[1].value, analyticsVisible, 1000)
   const urgentExpiryCount = useCountUp(analyticsStats[2].value, analyticsVisible, 1000)
@@ -359,6 +396,7 @@ function Website() {
         ])
         setInventoryCategories(categories)
         setExpiringFoods(expiringList)
+        setWeeklyCounts(countByWeek(items))
       } catch (error) {
         setApiError(error.message || 'Failed to load dashboard data')
       }
@@ -467,13 +505,13 @@ function Website() {
             style={{ '--ring-progress': `${ringProgress}%` }}
           >
             <div className="inventory-ring-inner">
-              <span className="ring-kicker">Inventory up</span>
-              <strong>14%</strong>
-              <p>vs last week</p>
+              <span className="ring-kicker">Logged this week</span>
+              <strong>{formatStatValue(weeklyCounts.thisWeek)}</strong>
+              <p>vs {formatStatValue(weeklyCounts.lastWeek)} last week</p>
             </div>
           </div>
           <p className="ring-caption">
-            1,284 total food items stored this week, up from 1,138 last week.
+            {formatStatValue(weeklyCounts.thisWeek)} items added in the past 7 days; {formatStatValue(weeklyCounts.lastWeek)} the week before.
           </p>
         </div>
       </section>
