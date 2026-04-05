@@ -53,4 +53,4 @@ AWS · DynamoDB
 
 ---
 
-*Built with care at a YouCode 2026 · Bloom Pantry · Amelie, Nina, Selina F, and Selina J*
+*Built with care at YouCode 2026 thanks to UBC Wics & Wids · Bloom Pantry · Amelie, Nina, Selina F, and Selina J*
