@@ -2,6 +2,31 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
+  GetRecipeRecommendationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getRecipeRecommendations.handler
+      Runtime: nodejs20.x
+      Environment:
+        Variables:
+          FOOD_TABLE_NAME: FoodItems
+          RECIPES_TABLE_NAME: Recipes
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+              Resource: "*"
+      Events:
+        GetRecipeRecommendationsApi:
+          Type: Api
+          Properties:
+            Path: /recipes/recommendations
+            Method: get
 
   SeedItemsFunction:
     Type: AWS::Serverless::Function
